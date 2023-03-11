@@ -1,0 +1,27 @@
+## rake db コマンド
+- 実行されてないmigration
+`rake db:abort_if_pending_migrations`
+- データベースの文字コード
+    `rake db:charset`
+- データベースの照合順序
+    `rake db:collation`
+- database.ymlの内容でデータベースを作成
+    `rake db:create`
+- database.ymlに定義してあるデータベースを全て作成
+    `rake db:create:all`
+- createの逆
+    `rake db:drop`
+- create:allの逆
+    `rake db:drop:all`
+- 未実行のマイグレーションファイルを全て実行する
+    `rake db:migrate`
+- migrationを指定STEP数だけやりなおす(STEPの指定はSTEP=nで)
+    `rake db:migrate:redo`
+- drop、create、migrate全てやる
+    `rake db:migrate:reset`
+- drop、create、schema.rbから復帰させる
+    `rake db:reset`
+- migrationのバージョンをSTEP=nで戻す
+    `rake db:rollback`
+- 現在のマイグレーションのバージョン
+    `rake db:version`
