@@ -1,5 +1,7 @@
-
-
+build:
+	docker compose build
+	docker-compose run api rake db:create
+	make up
 up:
 	docker compose up -d
 down:
