@@ -1,11 +1,8 @@
 build:
 	sudo docker-compose build --force-rm --no-cache
 	make up
-	# bundle install
-	# rake db:create
-	docker-compose ps
 up:
-	docker compose up -d
+	docker-compose up -d
 down:
 	docker-compose down
 	if docker images | grep matching; then docker rmi -f `docker images "matching_*" -q`; fi

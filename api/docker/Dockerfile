@@ -1,18 +1,33 @@
-FROM ruby:3.1.1
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-  && apt-get update -qq \
-  && apt-get install -y nodejs yarn \
-  && mkdir /myapp
+FROM ruby:3.1.1-alpine3.15
+
+RUN apk update && \
+    apk add --no-cache \
+    mysql-client \
+    mysql-dev \
+    bash \
+    vim \
+    tzdata && \
+    apk add --virtual build-packs --no-cache \
+    gcc \
+    g++ \
+    libc-dev \
+    libxml2-dev \
+    linux-headers \
+    make \
+    build-base \
+    curl-dev
+
+RUN mkdir /myapp
 WORKDIR /myapp
+
+ENV RUBY_YJIT_ENABLE=1
+
 COPY Gemfile /myapp/Gemfile
 COPY Gemfile.lock /myapp/Gemfile.lock
-RUN bundle install
-COPY . /myapp
 
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 3001
+RUN bundle install
+RUN apk del build-packs
+
+COPY . /myapp
 
 CMD ["rails", "server", "-b", "0.0.0.0"]
