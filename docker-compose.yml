@@ -1,7 +1,9 @@
 version: '3'
 services:
   api:
-    build: ./api/docker
+    build:
+      context: .
+      dockerfile: api/docker/Dockerfile
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
     volumes:
       - ./api/src:/myapp
@@ -27,8 +29,6 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     restart: always
-    networks:
-      - mysql-network
 
   cli:
     image: mysql:8.0.27

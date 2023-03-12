@@ -1,6 +1,9 @@
 build:
 	sudo docker-compose build --force-rm --no-cache
 	make up
+rebuild:
+	docker compose down --rmi all --volumes --remove-orphans
+	@make build
 up:
 	docker-compose up -d
 down:

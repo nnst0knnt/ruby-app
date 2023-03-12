@@ -22,12 +22,12 @@ WORKDIR /myapp
 
 ENV RUBY_YJIT_ENABLE=1
 
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
+COPY api/src/Gemfile /myapp/Gemfile
+COPY api/src/Gemfile.lock /myapp/Gemfile.lock
 
 RUN bundle install
 RUN apk del build-packs
 
-COPY . /myapp
+COPY api/src /myapp
 
 CMD ["rails", "server", "-b", "0.0.0.0"]
