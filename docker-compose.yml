@@ -1,21 +1,5 @@
 version: '3'
 services:
-  db:
-    platform: linux/x86_64 # M1チップ対応のため追記
-    container_name: db
-    image: mysql:8.0
-    build:
-      context: .
-      dockerfile: ./db/docker/Dockerfile
-    environment:
-      MYSQL_ROOT_PASSWORD: passw@rd
-      TZ: "Asia/Tokyo"
-      MYSQL_DATABASE: local_db
-    ports:
-      - '3306:3306'
-    volumes:
-      - mysql-data:/var/lib/mysql
-    restart: on-failure
   api:
     build: ./api/docker
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
@@ -24,8 +8,6 @@ services:
       - gem_data:/usr/local/bundle
     ports:
       - "3001:3001"
-    depends_on:
-      - db
     stdin_open: true
     tty: true
   app:
@@ -35,10 +17,30 @@ services:
       - "3000:3000"
     volumes:
       - ./app/react:/myapp
-    depends_on:
-      - api
+  db:
+    image: mysql:8.0.27
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    restart: always
+    networks:
+      - mysql-network
+
+  cli:
+    image: mysql:8.0.27
+    networks:
+      - mysql-network
+    command: mysql -hdb -uuser -ppassword db
 
 volumes:
   mysql-data:
   gem_data:
-    driver: local
+
+# ブリッジネットワーク を使って、アプリケーションコンテナとmysqlコンテナを通信可能に
+networks:
+  mysql-network:
+    driver: bridge
